@@ -10,31 +10,42 @@ import axios from 'axios';
 function App() {
   const [countries, setCountries] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get('https://ih-countries-api.herokuapp.com/countries')
-      .then((response) => {
-        setCountries(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  useEffect (()=>{
+    
+    axios.get('https://ih-countries-api.herokuapp.com/countries')
+    .then(response => {
 
-  return (
+       console.log("response", response.data)
+
+       let sorted = response.data.sort((a,b) => {
+          return a.name.common.localeCompare(b.name.common)
+       } )
+
+       // let countriesApiResponse = response.data
+
+       setCountries(sorted)
+    })
+    .catch((err) => console.log(err))
+  
+}, [])
+
+return (
+  <div className="App">
+    <Navbar />
     <div className="container">
-      <div className="row">
-        <Navbar />
-        <CountriesList allCountries={countries} />
-        <Routes>
-          <Route
-            path="/:countryCode"
-            element={<CountryDetails allCountries={countries} />}
-          />
-        </Routes>
-      </div>
+       <div className="row">
+          <div className="col-md-6">
+             <CountriesList allCountries={countries} />
+          </div>
+          <div className="col-md-6">
+             <Routes>
+                <Route path='/:countryCode' element={<CountryDetails allCountries={countries} />} />  
+             </Routes>
+          </div>
+       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default App;
